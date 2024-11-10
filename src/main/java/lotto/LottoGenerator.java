@@ -12,59 +12,39 @@ public class LottoGenerator {
 
     public LottoGenerator() {
         int amount = inputAmount();
-
-        int count = calculateLottoCount(amount);
-        List<Lotto> tmpLottoList = new ArrayList<>(count);
-
-        for (int i = 0; i < count; i++) {
-            List<Integer> tmpList = Randoms.pickUniqueNumbersInRange(1, 45, 6);
-            Collections.sort(tmpList);
-
-            tmpLottoList.add(new Lotto(tmpList));
-        }
-        this.Lottos = tmpLottoList;
         this.purchaseAmount = amount;
+        this.Lottos = initializeLottos(calculateLottoCount(amount));
     }
 
-    public LottoGenerator(String inputAmount) { //테스트 용
-        int amount = validateInputAmount(inputAmount);
-        validateAmount(amount);
-
-        int count = calculateLottoCount(amount);
-        List<Lotto> tmpLottoList = new ArrayList<>(count);
-
+    private List<Lotto> initializeLottos(int count) {
+        List<Lotto> lottoList = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
-            List<Integer> tmpList = Randoms.pickUniqueNumbersInRange(1, 45, 6);
-            Collections.sort(tmpList);
-
-            tmpLottoList.add(new Lotto(tmpList));
+            lottoList.add(new Lotto(generateLottoNumbers()));
         }
-        this.Lottos = tmpLottoList;
-        this.purchaseAmount = amount;
+        return lottoList;
+    }
+
+    private List<Integer> generateLottoNumbers() {
+        List<Integer> numbers = Randoms.pickUniqueNumbersInRange(1, 45, 6);
+        List<Integer> lottoNumbers = new ArrayList<>(numbers);
+        Collections.sort(lottoNumbers);
+        return lottoNumbers;
     }
 
     private int inputAmount() {
-        System.out.println("구입금액을 입력해 주세요.");
-        String inputAmount = Console.readLine().trim();
-        System.out.println();
+        while (true) {
+            try {
+                System.out.println("구입금액을 입력해 주세요.");
+                String inputAmount = Console.readLine().trim();
+                System.out.println();
 
-        int amount = validateInputAmount(inputAmount);
-        validateAmount(amount);
-
-        return amount;
-    }
-
-    private int validateInputAmount(String inputAmount) {
-        try {
-            return Integer.parseInt(inputAmount.trim());
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("[ERROR] 구입금액은 숫자로 이루어져야 합니다.");
-        }
-    }
-
-    private void validateAmount(int amount) {
-        if (amount%1000 != 0) {
-            throw new IllegalArgumentException("[ERROR] 구입금액은 1,000원 단위로 입력해야 합니다.");
+                int amount = InputValidator.validateInputAmount(inputAmount);
+                InputValidator.validateAmount(amount);
+                return amount;
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage()); // 오류 메시지 출력
+                System.out.println("다시 입력해 주세요.");
+            }
         }
     }
 
@@ -80,14 +60,13 @@ public class LottoGenerator {
         return purchaseAmount;
     }
 
-    public String toString() {
+    public String generateOutput() {
         StringBuilder result = new StringBuilder();
         result.append(Lottos.size()).append("개를 구매했습니다.\n");
 
         for (Lotto lotto : Lottos) {
             result.append(lotto).append("\n");
         }
-
         return result.toString();
     }
 

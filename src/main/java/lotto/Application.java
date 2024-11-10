@@ -7,7 +7,7 @@ public class Application {
         // TODO: 프로그램 구현
 
         LottoGenerator lottoGenerator = new LottoGenerator();
-        System.out.println(lottoGenerator);
+        System.out.println(lottoGenerator.generateOutput());
         List<Lotto> lottos = lottoGenerator.getLottos();
         int purchaseAmount = lottoGenerator.getPurchaseAmount();
 
